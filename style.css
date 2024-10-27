@@ -1,0 +1,73 @@
+* {
+    font-family: Times New Roman;
+    box-sizing: border-box;
+}
+
+#main-div {
+    display: flex;
+    flex-wrap: wrap;
+    height: 95vh;
+}
+
+#left-side {
+    flex: 20%;
+    background-color: #AAAAAA;
+}
+
+#right-side {
+    flex: 80%;
+    background-color: #DDDDDD;
+    text-align: center;
+}
+
+.row {
+    overflow: hidden;
+    width: max-content;
+    margin: auto;
+}
+
+.album-slot {
+    width: 50px;
+    height: 50px;
+    float: left;
+    display: block;
+    color: white;
+    border: 1px solid black;
+}
+
+#menu {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    overflow: hidden;
+}
+
+#menu div {
+    float: left;
+    display: block;
+    border-right: 1px solid black;
+    padding: 10px;
+}
+
+#menu div:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
+
+#menu-content {
+    padding: 10px;
+    padding-left: 20px;
+}
+
+#release-preview-grid {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    overflow: hidden;
+    height: max-content;
+}
+
+#release-preview {
+    width: 100px;
+    height: 100px;
+    float: left;
+    display: block;
+}
