@@ -47,20 +47,80 @@ function make_empty_chart(){
 function show_items_menu(){
     let content = "";
 
-    content += `release name: <input id="searched-name" type="text"> <button onclick="show_releases()">search</button>`;
+    content += `
+    <input id="searched-artist" type="text" placeholder="artist name"><br>
+    or<br>
+    <input id="searched-album" type="text" placeholder="album title"><br>
+    <button onclick="show_releases()">search</button><br>`;
 
     content += `<div id="release-preview-grid"></div>`
 
     document.getElementById("menu-content").innerHTML = content;
 }
 
-function show_releases(){
+function show_options_menu(){
     let content = "";
 
-    content += `<div id="release-preview"><img id="the-cure-1" draggable="true" ondragstart="drag(event)" width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/en/b/b8/CureDisintegration.jpg"></div>`;
-    content += `<div id="release-preview"><img id="the-cure-2" draggable="true" ondragstart="drag(event)" width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/en/0/07/The_Cure_-_Pornography.jpg"></div>`;
+    content += `
+    width:<input id="width-input" type="number" min="1" max="15" value="${width}"><br>
+    height:<input id="height-input" type="number" min="1" max="15" value="${height}">
+    `;
+
+    document.getElementById("menu-content").innerHTML = content;
+
+    document.getElementById("width-input").addEventListener("change", (event) => {
+        width = parseInt(event.target.value);
+        make_empty_chart();
+    });
+
+    document.getElementById("height-input").addEventListener("change", (event) => {
+        height = parseInt(event.target.value);
+        make_empty_chart();
+    });
+}
+
+function show_albums(data){
+    let release_grid_width = document.getElementById("release-preview-grid").clientWidth;
+    let num_in_row = 3;
+    let size = `${release_grid_width / num_in_row - 3}`;
+    
+    let content = "";
+    let style = `"draggable="true" ondragstart="drag(event)" width="${size}" height="${size}"`;
+
+    let i = 0;
+    let curr_row = "";
+    data.forEach(album => {
+        if (i % num_in_row == 0 && i != 0){
+            content += `<div class="row" style="width:100%;">${curr_row}</div>`;
+            curr_row = "";
+        }
+        curr_row += `<div class="release-preview" style="width:${size}px; height:${size}px;"><img ${style} id="${album.name}" src="${album.image[2]["#text"]}"></div>`;
+        i += 1;
+    });
+    content += `<div class="row" style="width:100%;">${curr_row}</div>`;
+    curr_row = "";
 
     document.getElementById("release-preview-grid").innerHTML = content;
+}
+
+async function show_releases(){
+    let input_field;
+
+    let data;
+    if(document.getElementById("searched-album").value != ''){
+        input_field = document.getElementById("searched-album").value;
+
+        let temp = await fetch_album_data(input_field);
+        data = temp.results.albummatches.album;
+    } else if(document.getElementById("searched-artist").value != ''){
+        input_field = document.getElementById("searched-artist").value;
+
+        let temp = await fetch_artist_data(input_field);
+        console.log(data);
+        data = temp.topalbums.album;
+    }
+    
+    show_albums(data)
 }
 
 function show_menu(){
@@ -68,7 +128,7 @@ function show_menu(){
         case ITEMS_MENU:
             show_items_menu();
             break;
-        case ITEMS_MENU:
+        case OPTIONS_MENU:
             show_options_menu();
             break;
     }
@@ -76,3 +136,38 @@ function show_menu(){
 
 make_empty_chart();
 show_menu();
+
+document.getElementById("add-items-tab").addEventListener("click", () => {
+    current_menu = ITEMS_MENU;
+    show_menu();
+});
+
+document.getElementById("options-tab").addEventListener("click", () => {
+    current_menu = OPTIONS_MENU;
+    show_menu();
+});
+
+///// --------- LASTFM DATA FETCHING
+
+
+const base_url = 'https://ws.audioscrobbler.com/2.0/';
+const artist_method = 'artist.getTopAlbums';
+const album_method = 'album.search';
+const format = 'json';
+let limit = 6;
+
+async function fetch_artist_data(input){
+    let url = `${base_url}/?method=${artist_method}&autocorrect=1&artist=${input}&api_key=${api_key}&format=${format}&limit=${limit}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return data;
+}
+
+async function fetch_album_data(input){
+    let url = `${base_url}/?method=${album_method}&album=${input}&api_key=${api_key}&format=${format}&limit=${limit}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return data;
+}

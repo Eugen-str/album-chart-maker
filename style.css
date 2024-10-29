@@ -1,5 +1,5 @@
 * {
-    font-family: Times New Roman;
+    font-family: Geneva, Verdana, sans-serif;
     box-sizing: border-box;
 }
 
@@ -10,12 +10,15 @@
 }
 
 #left-side {
+    border-radius: 8px;
     flex: 20%;
     background-color: #AAAAAA;
 }
 
 #right-side {
-    flex: 80%;
+    border-radius: 8px;
+    margin-left: 1%;
+    flex: 75%;
     background-color: #DDDDDD;
     text-align: center;
 }
@@ -61,11 +64,9 @@
 #release-preview-grid {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
-    overflow: hidden;
-    height: max-content;
 }
 
-#release-preview {
+.release-preview {
     width: 100px;
     height: 100px;
     float: left;
