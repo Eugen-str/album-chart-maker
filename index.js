@@ -4,6 +4,8 @@ const OPTIONS_MENU = 1;
 let width = 3, height = 3;
 let current_menu = ITEMS_MENU;
 
+let limit = 6;
+
 function allow_drop(ev) {
     ev.preventDefault();
 }
@@ -149,25 +151,23 @@ document.getElementById("options-tab").addEventListener("click", () => {
 
 ///// --------- LASTFM DATA FETCHING
 
-
-const base_url = 'https://ws.audioscrobbler.com/2.0/';
 const artist_method = 'artist.getTopAlbums';
 const album_method = 'album.search';
-const format = 'json';
-let limit = 6;
-
 async function fetch_artist_data(input){
-    let url = `${base_url}/?method=${artist_method}&autocorrect=1&artist=${input}&api_key=${api_key}&format=${format}&limit=${limit}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    return data;
+    let url = `https://lastfm-proxy.onrender.com/api/lastfm?method=${artist_method}&input=${input}&limit=${limit}`;
+    return await fetch_data(url);
 }
 
 async function fetch_album_data(input){
-    let url = `${base_url}/?method=${album_method}&album=${input}&api_key=${api_key}&format=${format}&limit=${limit}`;
+    let url = `https://lastfm-proxy.onrender.com/api/lastfm?method=${album_method}&input=${input}&limit=${limit}`;
+    return await fetch_data(url);
+}
+
+async function fetch_data(url){
     const response = await fetch(url);
     const data = await response.json();
+
+    console.log(data);
     
     return data;
 }
